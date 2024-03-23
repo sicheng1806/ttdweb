@@ -1,10 +1,16 @@
 from selenium import webdriver
-import unittest
-import time
 from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import WebDriverException
+
+from django.test import LiveServerTestCase
+import time
+
+MAX_WAIT = 10
 
 
-class NewVisitorTest(unittest.TestCase):
+class NewVisitorTest(LiveServerTestCase):
+
+    
 
     def setUp(self) -> None:
         options = webdriver.FirefoxOptions()
@@ -15,16 +21,24 @@ class NewVisitorTest(unittest.TestCase):
     def tearDown(self) -> None:
         self.brower.quit()
 
-    def check_for_rows_in_list_table(self,row_texts):
-        table = self.brower.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_tag_name("tr")
-        for row_text in row_texts:
-            self.assertIn(row_text,[row.text for row in rows])
+    def wait_for_rows_in_list_table(self,row_texts):
+        start_time = time.time()
+        while True:
+            try:
+                table = self.brower.find_element_by_id('id_list_table')
+                rows = table.find_elements_by_tag_name("tr")
+                for row_text in row_texts:
+                    self.assertIn(row_text,[row.text for row in rows])
+                return 
+            except (AssertionError,WebDriverException) as e:
+                if time.time() - start_time > MAX_WAIT:
+                    raise e 
+                time.sleep(0.5)
 
     def test_can_start_a_list_and_retrieve_it_later(self):
         # 卡秋纱听说又一个很酷的在线代办事项应用
         # 她去看了这个应用的首页
-        self.brower.get('http://localhost:8000')
+        self.brower.get(self.live_server_url)
 
         # 她注意到网页的标题和头部都包含 “To-Do” 这个词
         self.assertIn('To-Do',self.brower.title)
@@ -45,19 +59,16 @@ class NewVisitorTest(unittest.TestCase):
         # 她按回车键后，页面更新了
         # 待办事项表格中显示了 "1. 购买孔雀羽毛"
         inputbox.send_keys(Keys.ENTER)
-        time.sleep(1)
-
-        self.check_for_rows_in_list_table(["1: Buy peacock feathers"])
+        self.wait_for_rows_in_list_table(["1: Buy peacock feathers"])
         # 页面中又显示了一个文本框，可以输入其他的待办事项
         # 她输入了 "使用孔雀羽毛做假蝇"
         # 页面再次更新，她的清单中显示了这两个待办事项
         inputbox = self.brower.find_element_by_id("id_new_item")
         inputbox.send_keys('Use peacock feathers to make a fly')
         inputbox.send_keys(Keys.ENTER)
-        time.sleep(1)
-        self.check_for_rows_in_list_table([
+        self.wait_for_rows_in_list_table([
             "1: Buy peacock feathers",
-            "2: Use peacock feathers to make a fly "
+            "2: Use peacock feathers to make a fly"
         ])
         
         self.fail("Finish the test!")
@@ -70,5 +81,3 @@ class NewVisitorTest(unittest.TestCase):
 
         # 她很满意，去睡觉了
 
-if __name__ == '__main__':
-    unittest.main(warnings='ignore')
