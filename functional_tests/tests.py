@@ -70,14 +70,46 @@ class NewVisitorTest(LiveServerTestCase):
             "1: Buy peacock feathers",
             "2: Use peacock feathers to make a fly"
         ])
-        
-        self.fail("Finish the test!")
-
-        # 卡秋纱想知道这个网站是否会记住他的清单
-        # 她看到网站为她生成了一个唯一的URL
-        # 而且页面中有一些文字解说这个功能
-
-        # 她访问那个URL，发现她的待办事项列表还在
 
         # 她很满意，去睡觉了
 
+    def test_multiple_users_can_start_lists_at_different_urls(self):
+        # 卡秋纱新建一个待办事项清单
+        self.brower.get(self.live_server_url)
+        inputbox = self.brower.find_element_by_id("id_new_item")
+        inputbox.send_keys("Buy peacock feathers")
+        inputbox.send_keys(Keys.ENTER)
+        self.wait_for_rows_in_list_table(["1: Buy peacock feathers"])
+
+        # 她注意到页面有了个唯一的URL
+        katyusha_list_url = self.brower.current_url 
+        self.assertRegex(katyusha_list_url,'/lists/.+')
+
+        # 现在一名叫做弗朗西斯的新用户访问了网页
+
+        ## 我们使用一个新的浏览器会话，确保卡秋纱的信息不会从cookie中泄漏出去
+        self.brower.quit()
+        self.setUp()
+
+        # 弗朗西斯访问首页
+        # 页面中看不到卡秋纱的清单
+        self.brower.get(self.live_server_url)
+        page_text = self.brower.find_element_by_tag_name("body").text
+        self.assertNotIn("Buy peacock feathers",page_text)
+
+        # 弗朗西斯输入一个新待办事项，新建一个清单
+        inputbox = self.brower.find_element_by_id("id_new_item")
+        inputbox.send_keys("Buy milk\n")
+        self.wait_for_rows_in_list_table(["1: Buy milk"])
+        
+        # 弗朗西斯获得了他的唯一URL
+        francis_list_url = self.brower.current_url
+        self.assertRegex(francis_list_url,'/list/.+')
+        self.assertNotEqual(francis_list_url,katyusha_list_url)
+
+        # 这个页面还是没有卡秋纱的清单
+        page_text = self.brower.find_element_by_tag_name("body").text
+        self.assertNotIn("Buy peacock feathers",page_text)
+        self.assertIn("Buy milk",page_text)
+
+        # 两人都很满意，然后去睡觉了
