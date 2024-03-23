@@ -5,17 +5,16 @@ from selenium.common.exceptions import WebDriverException
 from django.test import LiveServerTestCase
 import time
 
-MAX_WAIT = 10
+MAX_WAIT = 4
 
 
 class NewVisitorTest(LiveServerTestCase):
-
-    
 
     def setUp(self) -> None:
         options = webdriver.FirefoxOptions()
         options.add_argument("-profile")
         options.add_argument("/home/sicheng1806/script/python/ttdweb/firefox_config")
+        #options.add_argument('--headless')
         self.brower = webdriver.Firefox(options=options)
 
     def tearDown(self) -> None:
@@ -104,7 +103,7 @@ class NewVisitorTest(LiveServerTestCase):
         
         # 弗朗西斯获得了他的唯一URL
         francis_list_url = self.brower.current_url
-        self.assertRegex(francis_list_url,'/list/.+')
+        self.assertRegex(francis_list_url,'/lists/.+')
         self.assertNotEqual(francis_list_url,katyusha_list_url)
 
         # 这个页面还是没有卡秋纱的清单
