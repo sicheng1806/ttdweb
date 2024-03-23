@@ -11,12 +11,7 @@ def home_page(request):
 
 def view_list(req,list_id):
     list_ = List.objects.get(id=list_id)
-    if req.method == "POST":
-        Item.objects.create(text=req.POST["item_text"],list=list_)
-    items = Item.objects.filter(list=list_)
-    return render(req,'list.html',{
-        "items":items,
-    })
+    return render(req,'list.html',dict(list=list_))
 
 def new_list(req):
     list_ = List.objects.create()
