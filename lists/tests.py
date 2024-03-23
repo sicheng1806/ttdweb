@@ -93,3 +93,14 @@ class NewListTest(TestCase):
         })
         self.assertEqual(resp.status_code,302)
 
+class NewItemTest(TestCase):
+
+    def test_add_item_with_exsiting_post(self):
+        corret_list = List.objects.create()
+        other_list = List.objects.create()
+
+        self.client.post(f"/lists/{corret_list.id}/add_item",data={
+            "item_text":"A new item"
+        })
+
+        self.assertEqual(Item.objects.count(),1)

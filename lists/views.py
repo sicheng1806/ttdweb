@@ -23,3 +23,9 @@ def new_list(req):
     if req.method == "POST":
         Item.objects.create(text=req.POST['item_text'],list=list_)
     return redirect(f'/lists/{list_.id}')
+
+def add_item(req,list_id):
+    list_ = List.objects.get(id=list_id)
+    if req.method == "POST":
+        Item.objects.create(text=req.POST["item_text"],list=list_)
+    return redirect(to=f"/lists/{list_.id}/",permanent=False)
