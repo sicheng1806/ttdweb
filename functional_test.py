@@ -1,5 +1,6 @@
 from selenium import webdriver
 import unittest
+import time
 
 class NewVisitorTest(unittest.TestCase):
 
@@ -19,6 +20,7 @@ class NewVisitorTest(unittest.TestCase):
 
         # 她注意到网页的标题和头部都包含 “To-Do” 这个词
         self.assertIn('To-Do',self.brower.title)
+        #time.sleep(4)
         self.fail('Finish the test!')
 
         # 应用邀请她输入一个待办事项
