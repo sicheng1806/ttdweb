@@ -51,7 +51,6 @@ class NewVisitorTest(LiveServerTestCase):
             inputbox.get_attribute('placeholder'),
             'Enter a to-do item'
         )
-
         # 她在一个文本框中输入了 "购买孔雀羽毛" 
         ## 卡秋纱的爱好是使用假蝇做饵钓鱼
         inputbox.send_keys("Buy peacock feathers")
@@ -97,9 +96,10 @@ class NewVisitorTest(LiveServerTestCase):
         page_text = self.brower.find_element_by_tag_name("body").text
         self.assertNotIn("Buy peacock feathers",page_text)
 
-        # 弗朗西斯输入一个新待办事项，新建一个清单
+        # 弗朗西斯输入一个新待办事项，新建一个清单,也看不到卡秋莎的清单
         inputbox = self.brower.find_element_by_id("id_new_item")
-        inputbox.send_keys("Buy milk\n")
+        inputbox.send_keys("Buy milk")
+        inputbox.send_keys(Keys.ENTER)
         self.wait_for_rows_in_list_table(["1: Buy milk"])
         
         # 弗朗西斯获得了他的唯一URL
