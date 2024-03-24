@@ -126,4 +126,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CSRF cumstom 
 
-CSRF_TRUSTED_ORINGS=['124.70.70.47']
+CSRF_TRUSTED_ORINGS=['http://124.70.70.47']
