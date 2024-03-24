@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-%*7*h=@aw*5dyi=^3q+=xyo@0s_(@fz&$&!rtr*9stxfj99uyt
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["124.70.70.47"]
 
 
 # Application definition
@@ -126,4 +126,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # CSRF cumstom 
 
-CSRF_TRUSTED_ORIGINS=['http://124.70.70.47']
+#CSRF_TRUSTED_ORIGINS=['http://124.70.70.47']
