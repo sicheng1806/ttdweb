@@ -2,13 +2,13 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import WebDriverException
 
-from django.test import LiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 import time
 
 MAX_WAIT = 4
 
 
-class NewVisitorTest(LiveServerTestCase):
+class NewVisitorTest(StaticLiveServerTestCase):
 
     def setUp(self) -> None:
         options = webdriver.FirefoxOptions()
@@ -117,6 +117,7 @@ class NewVisitorTest(LiveServerTestCase):
         # edies 访问首页 
         self.brower.get(self.live_server_url)
         self.brower.set_window_size(1024,768)
+        
 
         # 她看到输入框完美的居中显示
         inputbox = self.brower.find_element_by_id("id_new_item")
