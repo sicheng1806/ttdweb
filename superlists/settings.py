@@ -123,3 +123,7 @@ STATIC_ROOT = BASE_DIR/'../static'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# CSRF cumstom 
+
+CSRF_TRUSTED_ORINGS=['124.70.70.47']
