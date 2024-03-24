@@ -3,7 +3,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import WebDriverException
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-import time
+import time,os
 
 MAX_WAIT = 4
 
@@ -16,6 +16,12 @@ class NewVisitorTest(StaticLiveServerTestCase):
         options.add_argument("/home/sicheng1806/script/python/ttdweb/firefox_config")
         #options.add_argument('--headless')
         self.brower = webdriver.Firefox(options=options)
+        staging_server = os.environ.get('STAGING_SERVER')
+        staging_ip = os.environ.get('STAGING_IP')
+        if staging_ip:
+            self.live_server_url = staging_ip
+        if staging_server:
+            self.live_server_url = "http://" + staging_server
 
     def tearDown(self) -> None:
         self.brower.quit()
