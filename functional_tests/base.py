@@ -20,17 +20,21 @@ class FunctionalTest(StaticLiveServerTestCase):
     def tearDown(self) -> None:
         self.brower.quit()
     
-    def wait_for_rows_in_list_table(self,row_texts):
+    def wait_for(self,fn):
         start_time = time.time()
         while True:
             try:
-                table = self.brower.find_element_by_id('id_list_table')
-                rows = table.find_elements_by_tag_name("tr")
-                for row_text in row_texts:
-                    self.assertIn(row_text,[row.text for row in rows])
-                return 
+                return fn()
             except (AssertionError,WebDriverException) as e:
                 if time.time() - start_time > MAX_WAIT:
                     raise e 
                 time.sleep(0.5)
+
+    def wait_for_rows_in_list_table(self,row_texts):
+        def _assert_row_texts_In_list_table():
+            table = self.brower.find_element_by_id('id_list_table')
+            rows = table.find_elements_by_tag_name("tr")
+            for row_text in row_texts:
+                self.assertIn(row_text,[row.text for row in rows])
+        return self.wait_for(_assert_row_texts_In_list_table)
 
