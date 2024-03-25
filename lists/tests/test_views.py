@@ -3,7 +3,7 @@ from django.utils.html import escape
 from unittest import skip
 
 from lists.models import Item,List
-from lists.forms import ItemForm
+from lists.forms import ItemForm,EMPTY_ITEM_ERROR
 
 # Create your tests here.
 class HomePageTest(TestCase):
@@ -59,7 +59,7 @@ class ListViewTest(TestCase):
         corret_list = List.objects.create()
         other_list = List.objects.create()
         resp = self.client.post(f"/lists/{corret_list.id}",data={
-            "item_text":"A new item"
+            "text":"A new item"
         })
         self.assertEqual(Item.objects.count(),1)
         self.assertRedirects(resp,f'/lists/{corret_list.id}')
@@ -69,34 +69,47 @@ class ListViewTest(TestCase):
         list_ = List.objects.create()
         Item.objects.create(text='item1',list=list_)
         Item.objects.create(text='item1',list=list_)
-        resp = self.client.post(f'/lists/{list_.id}',data={'item_text':''})
+        resp = self.client.post(f'/lists/{list_.id}',data={'text':''})
         self.assertContains(resp,escape("You can't have an empty list item"))
         self.assertEqual(Item.objects.count(),2)
         self.assertEqual(List.objects.count(),1)
+
+    def test_displays_item_form(self):
+        list_ = List.objects.create()
+        resp = self.client.get(f'/lists/{list_.id}')
+        self.assertIsInstance(resp.context['form'],ItemForm)
+        self.assertContains(resp,'name="text"')
 
 class NewListTest(TestCase):
 
     def test_can_save_a_post_request(self):
         self.client.post('/lists/new',data={
-            "item_text":'A new list item'
+            "text":'A new list item'
         })
         self.assertEqual(Item.objects.count(),1)
         self.assertEqual(Item.objects.first().text,'A new list item')
     
     def test_redirects_after_POST(self):
         resp = self.client.post('/lists/new',data={
-            "item_text":'A new list item'
+            "text":'A new list item'
         })
         self.assertEqual(resp.status_code,302)
 
-    def test_validation_errors_are_sent_back_to_home_page_template(self):
-        resp = self.client.post('/lists/new',data={'item_text':''})
+    def test_for_invalid_input_renders_home_template(self):
+        resp = self.client.post('/lists/new',data={'text':''})
+        #breakpoint()
         self.assertEqual(resp.status_code,200)
         self.assertTemplateUsed(resp,'home.html')
-        self.assertContains(resp,escape("You can't have an empty list item"))
+    def test_validation_errors_are_shown_on_home_page(self):
+        resp = self.client.post('/lists/new',data={'text':''})
+        self.assertContains(resp,escape(EMPTY_ITEM_ERROR))
+    def test_for_invalid_input_passed_form_to_template(self):
+        resp = self.client.post('/lists/new',data={'text':''})
+        self.assertIsInstance(resp.context.get('form'),ItemForm)
+        
     
     def test_validation_list_items_arent_saved(self):
-        self.client.post('/lists/new',data={'item_text':''})
+        self.client.post('/lists/new',data={'text':''})
         self.assertEqual(Item.objects.count(),0)
         self.assertEqual(List.objects.count(),0)
 

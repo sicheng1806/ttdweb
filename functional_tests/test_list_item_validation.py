@@ -11,11 +11,10 @@ class ItemValidationTest(FunctionalTest):
         
         # 提交了一个空表单
         self.get_item_input_box().send_keys(Keys.ENTER)
-
-        # 页面还是位于首页，并且底部出现了错误提示,提示待办事项不能为空
-        self.wait_for(lambda : self.assertEqual(
-            self.brower.find_element_by_css_selector('.has-error').text,
-            "You can't have an empty list item"
+        # 浏览器截取了请求
+        # 清单页面不会加载
+        self.wait_for(lambda : self.brower.find_elements_by_css_selector(
+            '#id_text:invalid'
         ))
         # 丞输入了一个非空表单，这次来到了他自己的页面
         inputbox = self.get_item_input_box()
