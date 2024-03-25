@@ -14,7 +14,7 @@ class NewVisitorTest(FunctionalTest):
         self.assertIn("To-Do",header)
 
         # 应用邀请她输入一个待办事项
-        inputbox = self.brower.find_element_by_id('id_new_item')
+        inputbox = self.get_item_input_box()
         self.assertEqual(
             inputbox.get_attribute('placeholder'),
             'Enter a to-do item'
@@ -30,7 +30,7 @@ class NewVisitorTest(FunctionalTest):
         # 页面中又显示了一个文本框，可以输入其他的待办事项
         # 她输入了 "使用孔雀羽毛做假蝇"
         # 页面再次更新，她的清单中显示了这两个待办事项
-        inputbox = self.brower.find_element_by_id("id_new_item")
+        inputbox = self.get_item_input_box()
         inputbox.send_keys('Use peacock feathers to make a fly')
         inputbox.send_keys(Keys.ENTER)
         self.wait_for_rows_in_list_table([
@@ -41,7 +41,7 @@ class NewVisitorTest(FunctionalTest):
     def test_multiple_users_can_start_lists_at_different_urls(self):
         # 卡秋纱新建一个待办事项清单
         self.brower.get(self.live_server_url)
-        inputbox = self.brower.find_element_by_id("id_new_item")
+        inputbox = self.get_item_input_box()
         inputbox.send_keys("Buy peacock feathers")
         inputbox.send_keys(Keys.ENTER)
         self.wait_for_rows_in_list_table(["1: Buy peacock feathers"])
@@ -63,7 +63,7 @@ class NewVisitorTest(FunctionalTest):
         self.assertNotIn("Buy peacock feathers",page_text)
 
         # 弗朗西斯输入一个新待办事项，新建一个清单,也看不到卡秋莎的清单
-        inputbox = self.brower.find_element_by_id("id_new_item")
+        inputbox = self.get_item_input_box()
         inputbox.send_keys("Buy milk")
         inputbox.send_keys(Keys.ENTER)
         self.wait_for_rows_in_list_table(["1: Buy milk"])

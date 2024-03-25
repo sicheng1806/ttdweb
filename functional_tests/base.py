@@ -38,3 +38,5 @@ class FunctionalTest(StaticLiveServerTestCase):
                 self.assertIn(row_text,[row.text for row in rows])
         return self.wait_for(_assert_row_texts_In_list_table)
 
+    def get_item_input_box(self):
+        return self.brower.find_element_by_id('id_text')
