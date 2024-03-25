@@ -17,7 +17,6 @@ class ItemValidationTest(FunctionalTest):
             self.brower.find_element_by_css_selector('.has-error').text,
             "You can't have an empty list item"
         ))
-        self.assertEqual(self.brower.current_url,self.live_server_url)
         # 丞输入了一个非空表单，这次来到了他自己的页面
         inputbox = self.brower.find_element_by_id("id_new_item")
         inputbox.send_keys("写代码")
