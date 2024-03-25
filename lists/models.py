@@ -1,4 +1,5 @@
 from django.db import models
+from django import forms
 from django.urls import reverse
 
 # Create your models here.
@@ -10,4 +11,6 @@ class List(models.Model):
 class Item(models.Model):
     text = models.TextField(default='')
     list = models.ForeignKey(List,models.CASCADE,default=None)
+
+
 
