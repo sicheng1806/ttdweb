@@ -3,6 +3,7 @@ from django.utils.html import escape
 from unittest import skip
 
 from lists.models import Item,List
+from lists.forms import ItemForm
 
 # Create your tests here.
 class HomePageTest(TestCase):
@@ -10,6 +11,10 @@ class HomePageTest(TestCase):
     def test_home_page_returns_correct_html(self):
         response = self.client.get('/')
         self.assertTemplateUsed(response,'home.html')
+
+    def test_home_page_uses_item_form(self):
+        resp = self.client.get('/')
+        self.assertIsInstance(resp.context.get('form'),ItemForm)
 
 class ListViewTest(TestCase):
     def test_displays_all_items(self):
@@ -68,8 +73,6 @@ class ListViewTest(TestCase):
         self.assertContains(resp,escape("You can't have an empty list item"))
         self.assertEqual(Item.objects.count(),2)
         self.assertEqual(List.objects.count(),1)
-
-
 
 class NewListTest(TestCase):
 

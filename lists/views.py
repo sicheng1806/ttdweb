@@ -4,12 +4,13 @@ from django.core.exceptions import ValidationError
 
 
 from lists.models import Item,List
+from lists.forms import ItemForm
 
 # Create your views here.
 
 def home_page(request):
     '''接收一个http请求，返回一个response'''
-    return render(request,'home.html')
+    return render(request,'home.html',dict(form=ItemForm()))
 
 def view_list(req,list_id):
     list_ = List.objects.get(id=list_id)
