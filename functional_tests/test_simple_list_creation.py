@@ -1,43 +1,9 @@
-from selenium import webdriver
+from .base import FunctionalTest
 from selenium.webdriver.common.keys import Keys
-from selenium.common.exceptions import WebDriverException
 
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-import time,os
+class NewVisitorTest(FunctionalTest):
 
-MAX_WAIT = 4
-
-
-class NewVisitorTest(StaticLiveServerTestCase):
-
-    def setUp(self) -> None:
-        options = webdriver.FirefoxOptions()
-        options.add_argument("-profile")
-        options.add_argument("/home/sicheng1806/script/python/ttdweb/firefox_config")
-        #options.add_argument('--headless')
-        self.brower = webdriver.Firefox(options=options)
-        staging_server = os.environ.get('STAGING_SERVER')
-        if staging_server:
-            self.live_server_url = "http://" + staging_server
-
-    def tearDown(self) -> None:
-        self.brower.quit()
-
-    def wait_for_rows_in_list_table(self,row_texts):
-        start_time = time.time()
-        while True:
-            try:
-                table = self.brower.find_element_by_id('id_list_table')
-                rows = table.find_elements_by_tag_name("tr")
-                for row_text in row_texts:
-                    self.assertIn(row_text,[row.text for row in rows])
-                return 
-            except (AssertionError,WebDriverException) as e:
-                if time.time() - start_time > MAX_WAIT:
-                    raise e 
-                time.sleep(0.5)
-
-    def test_can_start_a_list_and_retrieve_it_later(self):
+    def test_can_start_a_list_for_one_user(self):
         # 卡秋纱听说又一个很酷的在线代办事项应用
         # 她去看了这个应用的首页
         self.brower.get(self.live_server_url)
@@ -71,8 +37,6 @@ class NewVisitorTest(StaticLiveServerTestCase):
             "1: Buy peacock feathers",
             "2: Use peacock feathers to make a fly"
         ])
-
-        # 她很满意，去睡觉了
 
     def test_multiple_users_can_start_lists_at_different_urls(self):
         # 卡秋纱新建一个待办事项清单
@@ -116,26 +80,3 @@ class NewVisitorTest(StaticLiveServerTestCase):
 
         # 两人都很满意，然后去睡觉了
     
-    def test_layout_and_styling(self):
-        # edies 访问首页 
-        self.brower.get(self.live_server_url)
-        self.brower.set_window_size(1024,768)
-        
-
-        # 她看到输入框完美的居中显示
-        inputbox = self.brower.find_element_by_id("id_new_item")
-        self.assertAlmostEqual(
-            inputbox.location['x'] + inputbox.size['width']/2,
-            512,
-            delta=10
-        )
-        # 她新建清单后，输入框仍完美地居中显示
-        inputbox.send_keys('testing')
-        inputbox.send_keys(Keys.ENTER)
-        self.wait_for_rows_in_list_table(['1: testing'])
-        inputbox = self.brower.find_element_by_id("id_new_item")
-        self.assertAlmostEqual(
-            inputbox.location['x'] + inputbox.size['width']/2,
-            512,
-            delta=10
-        )
