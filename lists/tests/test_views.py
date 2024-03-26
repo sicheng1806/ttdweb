@@ -3,7 +3,7 @@ from django.utils.html import escape
 from unittest import skip
 
 from lists.models import Item,List
-from lists.forms import ItemForm,EMPTY_ITEM_ERROR,DUPLICATE_ITEM_ERROR
+from lists.forms import ItemForm,EMPTY_ITEM_ERROR,DUPLICATE_ITEM_ERROR,ExistingListItemForm
 
 # Create your tests here.
 class HomePageTest(TestCase):
@@ -17,6 +17,7 @@ class HomePageTest(TestCase):
         self.assertIsInstance(resp.context.get('form'),ItemForm)
 
 class ListViewTest(TestCase):
+
     def test_displays_all_items(self):
         list_ = List.objects.create()
         Item.objects.create(text="itemey 1",list=list_)
@@ -79,16 +80,25 @@ class ListViewTest(TestCase):
         resp = self.client.get(f'/lists/{list_.id}')
         self.assertIsInstance(resp.context['form'],ItemForm)
         self.assertContains(resp,'name="text"')
-    @skip
+    
+    # 测试非空table，使用ExistingListItemForm
+    def test_displays_item_form(self):
+        list_ = List.objects.create()
+        resp = self.client.get(list_.get_absolute_url())
+        self.assertIsInstance(resp.context['form'],ExistingListItemForm)
+        self.assertContains(resp,'name="text"')
+
     def test_duplicate_items_errors_end_up_on_lists_page(self):
         list_ = List.objects.create()
         Item.objects.create(text='item1',list=list_)
         resp = self.client.post(list_.get_absolute_url(),data={
             'text':'item1'
         })
-        self.assertContains(resp,DUPLICATE_ITEM_ERROR)
+        self.assertContains(resp,escape(DUPLICATE_ITEM_ERROR))    
         self.assertTemplateUsed(resp,'list.html')
         self.assertEqual(Item.objects.count(),1)
+
+
 
 class NewListTest(TestCase):
 

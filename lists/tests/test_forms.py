@@ -52,3 +52,4 @@ class ExistingListItemFormTest(TestCase):
         form = ExistingListItemForm(for_list = list_,data={'text':'item1'})
         self.assertFalse(form.is_valid())
         self.assertEqual(form.errors['text'],[DUPLICATE_ITEM_ERROR])
+    

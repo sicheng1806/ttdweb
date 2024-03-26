@@ -3,7 +3,7 @@ from selenium.webdriver.common.keys import Keys
 from unittest import skip
 
 class NewVisitorTest(FunctionalTest):
-    @skip
+    #@skip
     def test_can_start_a_list_for_one_user(self):
         # 卡秋纱听说又一个很酷的在线代办事项应用
         # 她去看了这个应用的首页
@@ -36,7 +36,7 @@ class NewVisitorTest(FunctionalTest):
         inputbox.send_keys(Keys.ENTER)
         self.wait_for_row_in_list_table("1: Buy peacock feathers")
         self.wait_for_row_in_list_table("2: Use peacock feathers to make a fly")
-    @skip
+    #@skip
     def test_multiple_users_can_start_lists_at_different_urls(self):
         # 卡秋纱新建一个待办事项清单
         self.brower.get(self.live_server_url)

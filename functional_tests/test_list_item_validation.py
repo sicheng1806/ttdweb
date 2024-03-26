@@ -27,7 +27,7 @@ class ItemValidationTest(FunctionalTest):
         self.wait_for_row_in_list_table('2: second item')
         # 丞满意得退出了页面
 
-    @skip
+    
     def test_cannot_add_duplicate_items(self):
         # 丞访问首页，新建一个清单
         self.brower.get(self.live_server_url)
