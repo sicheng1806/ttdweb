@@ -3,7 +3,7 @@ from django.utils.html import escape
 from unittest import skip
 
 from lists.models import Item,List
-from lists.forms import ItemForm,EMPTY_ITEM_ERROR
+from lists.forms import ItemForm,EMPTY_ITEM_ERROR,DUPLICATE_ITEM_ERROR
 
 # Create your tests here.
 class HomePageTest(TestCase):
@@ -68,7 +68,7 @@ class ListViewTest(TestCase):
     def test_validation_errors_are_sent_back(self):
         list_ = List.objects.create()
         Item.objects.create(text='item1',list=list_)
-        Item.objects.create(text='item1',list=list_)
+        Item.objects.create(text='item2',list=list_)
         resp = self.client.post(f'/lists/{list_.id}',data={'text':''})
         self.assertContains(resp,escape("You can't have an empty list item"))
         self.assertEqual(Item.objects.count(),2)
@@ -79,6 +79,16 @@ class ListViewTest(TestCase):
         resp = self.client.get(f'/lists/{list_.id}')
         self.assertIsInstance(resp.context['form'],ItemForm)
         self.assertContains(resp,'name="text"')
+    @skip
+    def test_duplicate_items_errors_end_up_on_lists_page(self):
+        list_ = List.objects.create()
+        Item.objects.create(text='item1',list=list_)
+        resp = self.client.post(list_.get_absolute_url(),data={
+            'text':'item1'
+        })
+        self.assertContains(resp,DUPLICATE_ITEM_ERROR)
+        self.assertTemplateUsed(resp,'list.html')
+        self.assertEqual(Item.objects.count(),1)
 
 class NewListTest(TestCase):
 

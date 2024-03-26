@@ -2,8 +2,25 @@ from django.test import TestCase
 from lists.models import Item,List
 from django.core.exceptions import ValidationError
 
+
+
 # Create your tests here.
-class ListAndItemModelTest(TestCase):
+class ListModelTest(TestCase):
+
+    def test_get_absolute_url(self):
+        list_ = List.objects.create()
+        self.assertEqual(list_.get_absolute_url(),f'/lists/{list_.id}')
+    
+    def test_list_items_will_not_auto_sort(self):
+        list_ = List.objects.create()
+        texts = ['item2','item1']
+        Item.objects.create(list=list_,text=texts[0])
+        Item.objects.create(list=list_,text=texts[1])
+        for text,ls_item in zip(texts,list_.item_set.all()):
+            self.assertEqual(text,ls_item.text)
+
+
+class ItemModelTest(TestCase):
 
     def test_saving_and_retrieving_items(self):
         list_ = List() 
@@ -37,20 +54,16 @@ class ListAndItemModelTest(TestCase):
             item.save()
             item.full_clean()
     
-    def test_get_absolute_url(self):
-        list_ = List.objects.create()
-        self.assertEqual(list_.get_absolute_url(),f'/lists/{list_.id}')
-
     def test_duplicate_items_are_invalid(self):
         list_ = List.objects.create()
         Item.objects.create(text="item1",list=list_)
         with self.assertRaises(ValidationError):
             item = Item(list=list_,text='item1')
             item.full_clean()
+
     def test_CAN_save_same_item_to_different_lists(self):
         list1 = List.objects.create()
         list2 = List.objects.create()
         Item.objects.create(list=list1,text='item1')
         item = Item.objects.create(list=list2,text='item1')
-        item.full_clean() # 这里合法
-        
+        item.full_clean() # 这里不会报错

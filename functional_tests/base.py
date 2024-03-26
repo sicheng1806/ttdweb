@@ -30,12 +30,11 @@ class FunctionalTest(StaticLiveServerTestCase):
                     raise e 
                 time.sleep(0.5)
 
-    def wait_for_rows_in_list_table(self,row_texts):
+    def wait_for_row_in_list_table(self,row_text):
         def _assert_row_texts_In_list_table():
             table = self.brower.find_element_by_id('id_list_table')
             rows = table.find_elements_by_tag_name("tr")
-            for row_text in row_texts:
-                self.assertIn(row_text,[row.text for row in rows])
+            self.assertIn(row_text,[row.text for row in rows])
         return self.wait_for(_assert_row_texts_In_list_table)
 
     def get_item_input_box(self):

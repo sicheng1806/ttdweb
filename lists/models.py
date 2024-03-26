@@ -14,5 +14,6 @@ class Item(models.Model):
 
     class Meta:
         unique_together = ('list','text')
+        ordering = ['id']
 
 
