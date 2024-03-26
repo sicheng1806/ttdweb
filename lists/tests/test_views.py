@@ -64,7 +64,7 @@ class ListViewTest(TestCase):
         self.assertEqual(Item.objects.count(),1)
         self.assertRedirects(resp,f'/lists/{corret_list.id}')
     
-    @skip
+    #@skip
     def test_validation_errors_are_sent_back(self):
         list_ = List.objects.create()
         Item.objects.create(text='item1',list=list_)

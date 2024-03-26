@@ -17,7 +17,7 @@ def view_list(req:HttpRequest,list_id):
     if req.method == "POST":
         form = ItemForm(data=req.POST)
         if form.is_valid():
-            Item.objects.create(text=req.POST['text'],list=list_)
+            form.save(list_)
             return redirect(list_)
     return render(req,'list.html',{"form":form,'list':list_})
 
@@ -25,7 +25,7 @@ def new_list(req:HttpRequest):
     form = ItemForm(data=req.POST)
     if form.is_valid():
         list_ = List.objects.create()
-        Item.objects.create(text=req.POST['text'],list=list_)
+        form.save(list_)
         return redirect(list_)
     else:
         return render(req,'home.html',{"form":form})
