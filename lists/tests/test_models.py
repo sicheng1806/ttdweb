@@ -40,3 +40,17 @@ class ListAndItemModelTest(TestCase):
     def test_get_absolute_url(self):
         list_ = List.objects.create()
         self.assertEqual(list_.get_absolute_url(),f'/lists/{list_.id}')
+
+    def test_duplicate_items_are_invalid(self):
+        list_ = List.objects.create()
+        Item.objects.create(text="item1",list=list_)
+        with self.assertRaises(ValidationError):
+            item = Item(list=list_,text='item1')
+            item.full_clean()
+    def test_CAN_save_same_item_to_different_lists(self):
+        list1 = List.objects.create()
+        list2 = List.objects.create()
+        Item.objects.create(list=list1,text='item1')
+        item = Item.objects.create(list=list2,text='item1')
+        item.full_clean() # 这里合法
+        
