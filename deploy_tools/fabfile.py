@@ -28,7 +28,7 @@ def _get_latest_source(c:Connection,source_folder):
     else:
         c.run(f'git clone -b master {REPO_URL} {source_folder}')
     current_commit = c.local("git log -n 1 --format=%H").stdout.strip()
-    c.run(f'cd {source_folder} && git reset --hard {current_commit}')
+    c.run(f'cd {source_folder} && git reset --hard {current_commit[:44,]}')
 
 def _updata_settings(c:Connection,source_folder,site_name):
     settings_path = source_folder / 'superlists/settings.py'
